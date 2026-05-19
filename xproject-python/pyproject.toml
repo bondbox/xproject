@@ -1,0 +1,34 @@
+[build-system]
+requires = ["xpip-build>=1.4", "hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[project]
+dynamic = ["name", "urls", "authors", "version", "description", "dependencies"]
+readme = {file = "readme.md", content-type = "text/markdown"}
+license-files = ["LICENSE"]
+requires-python = ">=3.8"
+keywords = ["project"]
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+
+[project.scripts]
+xargproject-python = "xproject_python.xargproject:main"
+
+[tool.hatch.metadata.hooks.custom]
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
+
+[tool.hatch.build.targets.sdist]
+packages = ["xproject_python"]
+exclude = [
+    "xproject_python/unittest",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["xproject_python"]
+exclude = [
+    "xproject_python/unittest",
+]
