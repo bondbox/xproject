@@ -55,7 +55,8 @@ class Requirements:
 
 
 class Module:
-    TEMPLATES: Path = Path(__file__).parent / "templates" / "module"
+    TEMPLATES_MODULE: Path = Path(__file__).parent / "templates" / "module"
+    TEMPLATES_PROJECT: Path = Path(__file__).parent / "templates" / "project"
 
     def __init__(self, name: str, variable: Optional[Variable] = None):
         module_name: str = self.normalize(name)
@@ -64,7 +65,7 @@ class Module:
             if isinstance(variable, Variable) else Variable(module_name=module_name)  # noqa:E501
 
         templates: TemplateManagerPath = TemplateManagerPath(variables)
-        templates.load(self.TEMPLATES)
+        templates.load(self.TEMPLATES_MODULE)
 
         self.__name: str = module_name
         self.__templates: TemplateManagerPath = templates
