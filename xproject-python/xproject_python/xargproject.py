@@ -3,7 +3,6 @@
 from typing import Optional
 from typing import Sequence
 
-from xargproject.project import Project
 from xkits_command.actuator import Command
 from xkits_command.actuator import CommandArgument
 from xkits_command.actuator import CommandExecutor
@@ -11,6 +10,7 @@ from xkits_command.parser import ArgParser
 
 from xproject_python.attribute import __urlhome__
 from xproject_python.attribute import __version__
+from xproject_python.blueprint import Project
 
 
 @CommandArgument("init", help="Initialize a Python based command-line project")
@@ -24,9 +24,12 @@ def add_cmd_init(_arg: ArgParser):
 
 @CommandExecutor(add_cmd_init)
 def run_cmd_init(cmds: Command) -> int:
-    return Project.create(name=cmds.args.project_name,
-                          license=cmds.args.license,
-                          allow_update=cmds.args.update)
+    project: Project = Project(
+        name=cmds.args.project_name,
+        allow_update=cmds.args.update,
+    )
+    project.create()
+    return 0
 
 
 @CommandArgument("python", description="Create a Python based command-line project")  # noqa:E501

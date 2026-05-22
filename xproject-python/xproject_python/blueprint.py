@@ -12,6 +12,8 @@ from packaging.requirements import Requirement
 from xkits_file.template import TemplateManagerPath
 from xkits_file.template import Variable
 
+TEMPLATES: Path = Path(__file__).parent / "templates"
+
 
 class Requirements:
     """Requirements
@@ -55,8 +57,8 @@ class Requirements:
 
 
 class Module:
-    TEMPLATES_MODULE: Path = Path(__file__).parent / "templates" / "module"
-    TEMPLATES_PROJECT: Path = Path(__file__).parent / "templates" / "project"
+    TEMPLATES_MODULE: Path = TEMPLATES / "module"
+    TEMPLATES_PROJECT: Path = TEMPLATES / "project"
 
     def __init__(self, name: str, variable: Optional[Variable] = None):
         module_name: str = self.normalize(name)
@@ -116,10 +118,7 @@ class Project:
     def variables(self) -> Variable:
         return self.__variables
 
-    # @property
-    # def module(self) -> str:
-    #     return self.__module
-
-    # @classmethod
-    # def get_module_name(cls, name: str) -> str:
-    #     return name.replace("-", "_")
+    def create(self) -> None:
+        print(f"project name: {self.name}")
+        for module in self:
+            print(f"module name: {module.name}")
