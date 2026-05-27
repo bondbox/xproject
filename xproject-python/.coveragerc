@@ -1,0 +1,16 @@
+[run]
+omit = 
+	xproject_python/attribute.py
+	xproject_python/unittest/*
+source = 
+	xproject_python
+
+[report]
+exclude_lines = 
+	pragma: no cover
+	raise NotImplementedError
+	if __name__ == .__main__.:
+	def __repr__
+	pass
+fail_under = 100
+

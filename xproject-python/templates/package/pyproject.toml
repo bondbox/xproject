@@ -1,0 +1,48 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = [
+    "hatch-requirements-txt",
+    "hatchling",
+    "xpip-build>=1.4",
+]
+
+[project]
+authors = []
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+description = ""
+dynamic = [
+    "dependencies",
+    "version",
+]
+keywords = []
+license-files = [ "LICENSE",]
+name = ""
+requires-python = ""
+
+[project.readme]
+content-type = "text/markdown"
+file = "readme.md"
+
+[project.scripts]
+
+[project.urls]
+
+[tool.hatch.version]
+
+[tool.hatch.build.targets.sdist]
+exclude = []
+packages = []
+
+[tool.hatch.build.targets.wheel]
+exclude = []
+packages = []
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = []
+
+[tool.hatch.build.targets.sdist.force-include]
+
+[tool.hatch.build.targets.wheel.force-include]

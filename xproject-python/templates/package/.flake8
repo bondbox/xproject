@@ -1,0 +1,9 @@
+[flake8]
+count = True
+exclude =
+filename = *.py
+max-complexity =
+max-line-length =
+show-source = True
+statistics = True
+exit-zero = False
