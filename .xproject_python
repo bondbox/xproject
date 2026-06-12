@@ -13,7 +13,7 @@ base = "xproject-python"
 requires_python = ">=3.8"
 authors = [ "zoumingzhe",]
 keywords = []
-requirements = [ "xkits-command>=0.6", "xkits-config-toml>=0.7", "xkits-file>=0.10",]
+requirements = [ "xkits-command>=0.6", "xkits-config-toml>=0.7", "xkits-file>=0.10", "prompt-toolkit",]
 max_complexity = 15
 max_line_length = 127
 
@@ -27,7 +27,9 @@ templates = "templates"
 
 [packages.xproject-python.modules.xproject-python.scripts]
 xproject-python-generate = "projector:main"
+xproject-python-dialog = "dialogbox:main"
 xproject-python-config = "configure:main"
+xproject-python = "blueprint:main"
 
 [packages.xproject-python.modules.xproject-python.templates]
 "__init__.py" = false

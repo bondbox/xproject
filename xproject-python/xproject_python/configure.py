@@ -63,6 +63,29 @@ class ProjectConfig(ConfigTOML):
     version: str = "0.1.alpha.1"
 
 
+@CommandArgument("check", help="Check Python project configuration")
+def add_cmd_config_check(_arg: ArgParser):
+    pass
+
+
+@CommandExecutor(add_cmd_config_check)
+def run_cmd_config_check(cmds: Command) -> int:
+    project_config = ProjectConfig.loadf(DEFAULT_CONFIG_FILE)
+    if not isinstance(project_config.name, str):
+        cmds.stderr_red("Project name is not a string")
+    if not isinstance(project_config.home, str):
+        cmds.stderr_red("Project home is not a string")
+    if not isinstance(project_config.description, str):
+        cmds.stderr_red("Project description is not a string")
+    if not isinstance(project_config.authors, dict):
+        cmds.stderr_red("Project authors is not a dict")
+    if not isinstance(project_config.keywords, list):
+        cmds.stderr_red("Project keywords is not a list")
+    if not isinstance(project_config.packages, dict):
+        cmds.stderr_red("Project packages is not a dict")
+    return 0
+
+
 @CommandArgument("update", help="Update Python project configuration")
 def add_cmd_config_update(_arg: ArgParser):
     pass
@@ -86,7 +109,7 @@ def add_cmd_config(_arg: ArgParser):
                       help="Specify configuration file")
 
 
-@CommandExecutor(add_cmd_config, add_cmd_config_update)
+@CommandExecutor(add_cmd_config, add_cmd_config_check, add_cmd_config_update)
 def run_cmd_config(cmds: Command) -> int:  # pylint: disable=unused-argument
     return 0
 

@@ -20,7 +20,9 @@ file = "readme.md"
 
 [project.scripts]
 xproject-python-generate = "xproject_python.projector:main"
+xproject-python-dialog = "xproject_python.dialogbox:main"
 xproject-python-config = "xproject_python.configure:main"
+xproject-python = "xproject_python.blueprint:main"
 
 [project.urls]
 Homepage = "https://github.com/bondbox/xproject/"

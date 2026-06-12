@@ -1,3 +1,4 @@
 xkits-command>=0.6
 xkits-config-toml>=0.7
 xkits-file>=0.10
+prompt-toolkit
