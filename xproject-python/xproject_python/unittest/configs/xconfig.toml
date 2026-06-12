@@ -1,0 +1,119 @@
+name = "xconfig"
+home = "https://github.com/bondbox/xconfig/"
+description = "Config module"
+keywords = [ "config", "configuration",]
+version = "0.7"
+
+[authors.zoumingzhe]
+name = "Mingzhe Zou"
+email = "zoumingzhe@outlook.com"
+
+[packages.xkits-config]
+base = "xconfig"
+requires_python = ">=3.8"
+authors = [ "zoumingzhe",]
+keywords = []
+requirements = [ "xkits-lib>=0.4",]
+max_complexity = 15
+max_line_length = 127
+
+[packages.xkits-config-attr]
+base = "xconfig-attr"
+requires_python = ">=3.8"
+authors = [ "zoumingzhe",]
+keywords = []
+requirements = [ "xkits-config", "attrs",]
+max_complexity = 10
+max_line_length = 127
+
+[packages.xkits-config-file]
+base = "xconfig-file"
+requires_python = ">=3.8"
+authors = [ "zoumingzhe",]
+keywords = []
+requirements = [ "xkits-config", "xkits-file>=0.10",]
+max_complexity = 10
+max_line_length = 127
+
+[packages.xkits-config-toml]
+base = "xconfig-toml"
+requires_python = ">=3.8"
+authors = [ "zoumingzhe",]
+keywords = []
+requirements = [ "xkits-config-file", "toml",]
+max_complexity = 10
+max_line_length = 127
+
+[packages.xkits-config-yaml]
+base = "xconfig-yaml"
+requires_python = ">=3.8"
+authors = [ "zoumingzhe",]
+keywords = []
+requirements = [ "xkits-config-file", "PyYAML",]
+max_complexity = 10
+max_line_length = 127
+
+[packages.xkits-config.modules.source]
+base = "."
+package = [ "xkits_config_annot.py", "xkits_config_class.py", "xkits_config.py",]
+omitted = [ "unittest/*", "attribute.py", "hatch_build.py",]
+exclude = []
+
+[packages.xkits-config-attr.modules.source]
+base = "."
+package = [ "xkits_config_attrs.py",]
+omitted = [ "unittest/*", "attribute.py", "hatch_build.py",]
+exclude = []
+
+[packages.xkits-config-file.modules.source]
+base = "."
+package = [ "xkits_config_file.py", "xkits_config_json.py",]
+omitted = [ "unittest/*", "attribute.py", "hatch_build.py",]
+exclude = []
+
+[packages.xkits-config-toml.modules.source]
+base = "."
+package = [ "xkits_config_toml.py",]
+omitted = [ "unittest/*", "attribute.py", "hatch_build.py",]
+exclude = []
+
+[packages.xkits-config-yaml.modules.source]
+base = "."
+package = [ "xkits_config_yaml.py",]
+omitted = [ "unittest/*", "attribute.py", "hatch_build.py",]
+exclude = []
+
+[packages.xkits-config.modules.source.include]
+
+[packages.xkits-config.modules.source.scripts]
+
+[packages.xkits-config.modules.source.templates]
+"attribute.py" = true
+
+[packages.xkits-config-attr.modules.source.include]
+
+[packages.xkits-config-attr.modules.source.scripts]
+
+[packages.xkits-config-attr.modules.source.templates]
+"attribute.py" = true
+
+[packages.xkits-config-file.modules.source.include]
+
+[packages.xkits-config-file.modules.source.scripts]
+
+[packages.xkits-config-file.modules.source.templates]
+"attribute.py" = true
+
+[packages.xkits-config-toml.modules.source.include]
+
+[packages.xkits-config-toml.modules.source.scripts]
+
+[packages.xkits-config-toml.modules.source.templates]
+"attribute.py" = true
+
+[packages.xkits-config-yaml.modules.source.include]
+
+[packages.xkits-config-yaml.modules.source.scripts]
+
+[packages.xkits-config-yaml.modules.source.templates]
+"attribute.py" = true

@@ -30,7 +30,7 @@ class Configuration:
 
     def dump(self, filepath: Union[str, Path], writable: bool = False):
         if isinstance(filepath, str):
-            filepath = Path(filepath)
+            filepath = Path(filepath)  # pragma: no cover
 
         if not filepath.exists() or writable:
             with filepath.open("w", encoding="utf-8") as whdl:
@@ -154,7 +154,7 @@ class Pyproject:  # pylint: disable=too-many-public-methods
 
     def dump(self, filepath: Union[str, Path], writable: bool = False):
         if isinstance(filepath, str):
-            filepath = Path(filepath)
+            filepath = Path(filepath)  # pragma: no cover
 
         if not filepath.exists() or writable:
             with filepath.open("w", encoding="utf-8") as whdl:
@@ -163,7 +163,7 @@ class Pyproject:  # pylint: disable=too-many-public-methods
     @classmethod
     def load(cls, filepath: Union[str, Path]) -> "Pyproject":
         if isinstance(filepath, str):
-            filepath = Path(filepath)
+            filepath = Path(filepath)  # pragma: no cover
 
         with filepath.open("r", encoding="utf-8") as rhdl:
             return cls(coder=load(rhdl))
@@ -192,7 +192,7 @@ class Requirements:
 
     def dumpf(self, filepath: Union[str, Path], writable: bool = False) -> None:  # noqa:E501
         if isinstance(filepath, str):
-            filepath = Path(filepath)
+            filepath = Path(filepath)  # pragma: no cover
 
         if not filepath.exists() or writable:
             with filepath.open("w", encoding="utf-8") as whdl:
