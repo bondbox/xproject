@@ -1,6 +1,6 @@
 # coding:utf-8
 
-__version__ = "0.1.alpha.1"
+__version__ = "0.1"
 
 # project info
 __project_name__ = "xproject"

@@ -2,7 +2,7 @@ name = "xproject"
 home = "https://github.com/bondbox/xproject/"
 description = "Initialize project files"
 keywords = [ "project",]
-version = "0.1.alpha.1"
+version = "0.1"
 
 [authors.zoumingzhe]
 name = "Mingzhe Zou"
