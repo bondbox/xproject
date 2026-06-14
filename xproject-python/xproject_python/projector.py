@@ -131,6 +131,7 @@ class Package:  # pylint: disable=too-many-instance-attributes
 
         variables: Variable = variable.duplicate() if isinstance(variable, Variable) else Variable()  # noqa:E501
         variables.set_default("package_name", package_name := Requirements.normalize(requirement=name).name)  # noqa:E501
+        variables.set_default("package_description", package_description := option.description or config.description)  # noqa:E501
         variables.set_default("package_version", package_version := option.version or config.version)  # noqa:E501
 
         authors: List[AuthorConfig] = [config.authors[index] for index in option.authors]  # noqa:E501
@@ -143,7 +144,7 @@ class Package:  # pylint: disable=too-many-instance-attributes
         python_version: str = option.requires_python or f"{version_info.major}.{version_info.minor}"  # noqa:E501
         pyproject: Pyproject = Pyproject.load(self.TEMPLATES_PACKAGE / Pyproject.FILENAME)  # noqa:E501
         pyproject.project["name"] = package_name
-        pyproject.project["description"] = config.description
+        pyproject.project["description"] = package_description
         pyproject.project["requires-python"] = python_version
         pyproject.project_authors.extend(author.__dict__ for author in authors)
         pyproject.project_keywords.extend(config.keywords)

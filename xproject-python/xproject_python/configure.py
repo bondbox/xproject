@@ -43,6 +43,7 @@ class ModuleConfig(Settings):
 class PackageConfig(Settings):  # pylint: disable=too-many-instance-attributes
     base: Optional[str] = None
     version: Optional[str] = None
+    description: Optional[str] = None
     requires_python: Optional[str] = None
     authors: List[str] = field(default_factory=list)
     keywords: List[str] = field(default_factory=list)
