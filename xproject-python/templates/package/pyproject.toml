@@ -3,7 +3,6 @@ build-backend = "hatchling.build"
 requires = [
     "hatch-requirements-txt",
     "hatchling",
-    "xpip-build>=1.4",
 ]
 
 [project]

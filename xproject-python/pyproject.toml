@@ -1,6 +1,6 @@
 [build-system]
 build-backend = "hatchling.build"
-requires = [ "hatch-requirements-txt", "hatchling", "xpip-build>=1.4",]
+requires = [ "hatch-requirements-txt", "hatchling",]
 
 [project]
 classifiers = [ "Programming Language :: Python", "Programming Language :: Python :: 3",]
