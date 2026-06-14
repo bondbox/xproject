@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from dataclasses import field
 from errno import ENOENT
+from sys import version_info
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -79,6 +80,11 @@ def run_cmd_config_update(cmds: Command) -> int:
             return ENOENT
         project_config: ProjectConfig = ProjectConfig()
 
+    for package_name, package_config in project_config.packages.items():
+        if not package_config.requires_python:
+            requires_python: str = f">={version_info.major}.{version_info.minor}"  # noqa:E501
+            cmds.stderr_yellow(f"Update package {package_name} requires-python to {requires_python}")  # noqa:E501
+            package_config.requires_python = requires_python
     project_config.dumpf(cmds.args.file)
     cmds.stderr_green(f"Configuration file {cmds.args.file} updated")
     return 0

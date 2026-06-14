@@ -10,7 +10,6 @@ email = "zoumingzhe@outlook.com"
 
 [packages.xkits-config]
 base = "xconfig"
-requires_python = ">=3.8"
 authors = [ "zoumingzhe",]
 keywords = []
 requirements = [ "xkits-lib>=0.4",]
@@ -19,7 +18,6 @@ max_line_length = 127
 
 [packages.xkits-config-attr]
 base = "xconfig-attr"
-requires_python = ">=3.8"
 authors = [ "zoumingzhe",]
 keywords = []
 requirements = [ "xkits-config", "attrs",]
@@ -28,7 +26,6 @@ max_line_length = 127
 
 [packages.xkits-config-file]
 base = "xconfig-file"
-requires_python = ">=3.8"
 authors = [ "zoumingzhe",]
 keywords = []
 requirements = [ "xkits-config", "xkits-file>=0.10",]
@@ -37,7 +34,6 @@ max_line_length = 127
 
 [packages.xkits-config-toml]
 base = "xconfig-toml"
-requires_python = ">=3.8"
 authors = [ "zoumingzhe",]
 keywords = []
 requirements = [ "xkits-config-file", "toml",]
@@ -46,7 +42,6 @@ max_line_length = 127
 
 [packages.xkits-config-yaml]
 base = "xconfig-yaml"
-requires_python = ">=3.8"
 authors = [ "zoumingzhe",]
 keywords = []
 requirements = [ "xkits-config-file", "PyYAML",]

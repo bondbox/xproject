@@ -144,7 +144,7 @@ class Package:  # pylint: disable=too-many-instance-attributes
         flake8: Flake8 = Flake8.load(self.TEMPLATES_PACKAGE / Flake8.FILENAME)
         pylint: PylintRC = PylintRC.load(self.TEMPLATES_PACKAGE / PylintRC.FILENAME)  # noqa:E501
 
-        python_version: str = option.requires_python or f"{version_info.major}.{version_info.minor}"  # noqa:E501
+        python_version: str = option.requires_python or f">={version_info.major}.{version_info.minor}"  # noqa:E501
         pyproject: Pyproject = Pyproject.load(self.TEMPLATES_PACKAGE / Pyproject.FILENAME)  # noqa:E501
         pyproject.project["name"] = package_name
         pyproject.project["description"] = package_description
