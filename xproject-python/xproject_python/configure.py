@@ -19,6 +19,7 @@ from xkits_config_toml import ConfigTOML
 from xproject_python.attribute import __project_home__ as xproject_home
 from xproject_python.attribute import __project_name__ as xproject_name
 from xproject_python.attribute import __version__ as version
+from xproject_python.utilities import Requirements
 
 DEFAULT_CONFIG_FILE: str = f".{xproject_name}_python"
 
@@ -80,11 +81,30 @@ def run_cmd_config_update(cmds: Command) -> int:
             return ENOENT
         project_config: ProjectConfig = ProjectConfig()
 
+    if len(project_config.packages) < 1:
+        project_config.packages[project_config.name] = PackageConfig()
     for package_name, package_config in project_config.packages.items():
         if not package_config.requires_python:
             requires_python: str = f">={version_info.major}.{version_info.minor}"  # noqa:E501
             cmds.stderr_yellow(f"Update package {package_name} requires-python to {requires_python}")  # noqa:E501
             package_config.requires_python = requires_python
+        if len(package_config.modules) < 1:
+            module_name: str = Requirements.normalize(requirement=package_name).name.replace("-", "_")  # noqa:E501
+            cmds.stderr_yellow(f"Add module {module_name} to package {package_name}")  # noqa:E501
+            package_config.modules[module_name] = ModuleConfig(
+                base=module_name,
+                package=[module_name],
+                omitted=[
+                    "attribute.py",
+                    "unittest/*",
+                ],
+                exclude=[
+                    "unittest",
+                ],
+                templates={
+                    "attribute.py": True,
+                }
+            )
     project_config.dumpf(cmds.args.file)
     cmds.stderr_green(f"Configuration file {cmds.args.file} updated")
     return 0
