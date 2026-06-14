@@ -88,7 +88,7 @@ def run_cmd_config_update(cmds: Command) -> int:
             requires_python: str = f">={version_info.major}.{version_info.minor}"  # noqa:E501
             cmds.stderr_yellow(f"Update package {package_name} requires-python to {requires_python}")  # noqa:E501
             package_config.requires_python = requires_python
-        if len(package_config.modules) < 1:
+        if (modules := len(package_config.modules)) < 1:
             module_name: str = Requirements.normalize(requirement=package_name).name.replace("-", "_")  # noqa:E501
             cmds.stderr_yellow(f"Add module {module_name} to package {package_name}")  # noqa:E501
             package_config.modules[module_name] = ModuleConfig(
@@ -105,6 +105,13 @@ def run_cmd_config_update(cmds: Command) -> int:
                     "attribute.py": True,
                 }
             )
+        else:
+            for module_name, module_config in package_config.modules.items():  # noqa:E501
+                if module_config.base is None:
+                    cmds.stderr_yellow(f"Update module {package_name}/{module_name} base to {module_name}")  # noqa:E501
+                    module_config.base = module_name
+                if modules == 1:
+                    module_config.templates.setdefault("attribute.py", True)  # noqa:E501
     project_config.dumpf(cmds.args.file)
     cmds.stderr_green(f"Configuration file {cmds.args.file} updated")
     return 0

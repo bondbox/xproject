@@ -1,0 +1,30 @@
+name = "xproject"
+home = "https://github.com/bondbox/xproject/"
+description = "Initialize project files"
+keywords = [ "project",]
+version = "0.1.alpha.1"
+
+[authors.zoumingzhe]
+name = "Mingzhe Zou"
+email = "zoumingzhe@outlook.com"
+
+[packages.xproject-python]
+base = "xproject-python"
+requires_python = ">=3.8"
+authors = [ "zoumingzhe",]
+keywords = []
+requirements = []
+max_complexity = 10
+max_line_length = 127
+
+[packages.xproject-python.modules.xproject-python]
+omitted = [ "attribute.py", "unittest/*",]
+exclude = [ "unittest",]
+
+[packages.xproject-python.modules.xproject-python.include]
+
+[packages.xproject-python.modules.xproject-python.scripts]
+
+[packages.xproject-python.modules.xproject-python.templates]
+"__init__.py" = false
+"attribute.py" = true
