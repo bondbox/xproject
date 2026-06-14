@@ -47,7 +47,10 @@ class Module:
         variables: Variable = variable.duplicate()if isinstance(variable, Variable) else Variable()  # noqa:E501
         variables.set_default("module_name", module_name := self.normalize(name))  # noqa:E501
 
+        module_base: str = option.base or self.DOT
+
         self.__name: str = module_name
+        self.__base: str = module_base
         self.__option: ModuleConfig = option
         self.__variable: Variable = variables
 
@@ -57,7 +60,7 @@ class Module:
 
     @property
     def base(self) -> str:
-        return self.option.base or self.DOT
+        return self.__base
 
     @property
     def option(self) -> ModuleConfig:
@@ -155,7 +158,10 @@ class Package:  # pylint: disable=too-many-instance-attributes
         for requirement in option.requirements:
             requirements.add(requirement)
 
+        package_base: str = option.base or (package_name if len(config.packages) > 1 else Module.DOT)  # noqa:E501
+
         self.__name: str = package_name
+        self.__base: str = package_base
         self.__version: str = package_version
         self.__option: PackageConfig = option
         self.__variable: Variable = variables
@@ -174,12 +180,12 @@ class Package:  # pylint: disable=too-many-instance-attributes
         return self.__name
 
     @property
-    def version(self) -> str:
-        return self.__version
+    def base(self) -> str:
+        return self.__base
 
     @property
-    def base(self) -> str:
-        return self.option.base or "."
+    def version(self) -> str:
+        return self.__version
 
     @property
     def option(self) -> PackageConfig:
