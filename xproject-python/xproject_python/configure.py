@@ -66,18 +66,22 @@ class ProjectConfig(ConfigTOML):
 
 @CommandArgument("update", help="Update Python project configuration")
 def add_cmd_config_update(_arg: ArgParser):
-    pass
+    _arg.add_opt_on("--create", help="Create configuration file if not exists")
 
 
 @CommandExecutor(add_cmd_config_update)
 def run_cmd_config_update(cmds: Command) -> int:
     try:
-        ProjectConfig.loadf(cmds.args.file).dumpf(cmds.args.file)
-        cmds.stderr_green(f"Configuration file {cmds.args.file} updated")
-        return 0
+        project_config: ProjectConfig = ProjectConfig.loadf(cmds.args.file)
     except FileNotFoundError:
         cmds.stderr_red(f"Configuration file {cmds.args.file} not found")
-        return ENOENT
+        if not cmds.args.create:
+            return ENOENT
+        project_config: ProjectConfig = ProjectConfig()
+
+    project_config.dumpf(cmds.args.file)
+    cmds.stderr_green(f"Configuration file {cmds.args.file} updated")
+    return 0
 
 
 @CommandArgument("config", help="Manage Python project configuration")
