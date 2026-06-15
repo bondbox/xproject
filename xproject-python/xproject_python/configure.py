@@ -93,7 +93,6 @@ def run_cmd_config_update(cmds: Command) -> int:
             cmds.stderr_yellow(f"Add module {module_name} to package {package_name}")  # noqa:E501
             package_config.modules[module_name] = ModuleConfig(
                 base=module_name,
-                package=[module_name],
                 omitted=[
                     "attribute.py",
                     "unittest/*",
