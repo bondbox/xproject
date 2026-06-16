@@ -4,7 +4,7 @@ description = "Initialize project files"
 keywords = [
     "project",
 ]
-version = "0.2.1"
+version = "0.3"
 
 [authors.zoumingzhe]
 name = "Mingzhe Zou"
