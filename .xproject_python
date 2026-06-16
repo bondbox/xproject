@@ -1,7 +1,9 @@
 name = "xproject"
 home = "https://github.com/bondbox/xproject/"
 description = "Initialize project files"
-keywords = [ "project",]
+keywords = [
+    "project",
+]
 version = "0.2.1"
 
 [authors.zoumingzhe]
@@ -11,16 +13,27 @@ email = "zoumingzhe@outlook.com"
 [packages.xproject-python]
 base = "xproject-python"
 requires_python = ">=3.8"
-authors = [ "zoumingzhe",]
+authors = [
+    "zoumingzhe",
+]
 keywords = []
-requirements = [ "xkits-command>=0.6", "xkits-config-toml>=0.7", "xkits-file>=0.10",]
+requirements = [
+    "xkits-command>=0.7",
+    "xkits-config-toml>=0.8",
+    "xkits-file>=0.10",
+]
 max_complexity = 15
 max_line_length = 127
 
 [packages.xproject-python.modules.xproject-python]
 base = "xproject_python"
-omitted = [ "attribute.py", "unittest/*",]
-exclude = [ "unittest",]
+omitted = [
+    "attribute.py",
+    "unittest/*",
+]
+exclude = [
+    "unittest",
+]
 
 [packages.xproject-python.modules.xproject-python.include]
 templates = "templates"
