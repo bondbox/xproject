@@ -12,8 +12,8 @@ from typing import TypeVar
 from typing import Union
 
 from packaging.requirements import Requirement
-from toml import dump
-from toml import load
+from tomli_w import dump
+from tomli import load
 
 
 CFGT = TypeVar("CFGT", bound="Configuration")
@@ -157,7 +157,7 @@ class Pyproject:  # pylint: disable=too-many-public-methods
             filepath = Path(filepath)  # pragma: no cover
 
         if not filepath.exists() or writable:
-            with filepath.open("w", encoding="utf-8") as whdl:
+            with filepath.open("wb") as whdl:
                 dump(self.coder, whdl)
 
     @classmethod
@@ -165,7 +165,7 @@ class Pyproject:  # pylint: disable=too-many-public-methods
         if isinstance(filepath, str):
             filepath = Path(filepath)  # pragma: no cover
 
-        with filepath.open("r", encoding="utf-8") as rhdl:
+        with filepath.open("rb") as rhdl:
             return cls(coder=load(rhdl))
 
 
