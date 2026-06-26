@@ -1,26 +1,39 @@
 [build-system]
 build-backend = "hatchling.build"
-requires = [ "hatch-requirements-txt", "hatchling",]
+requires = [
+    "hatch-requirements-txt",
+    "hatchling",
+]
 
 [project]
-classifiers = [ "Programming Language :: Python", "Programming Language :: Python :: 3",]
+authors = [
+    { name = "Mingzhe Zou", email = "zoumingzhe@outlook.com" },
+]
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
 description = "Initialize project files"
-dynamic = [ "dependencies", "version",]
-keywords = [ "project",]
-license-files = [ "LICENSE",]
+dynamic = [
+    "dependencies",
+    "version",
+]
+keywords = [
+    "project",
+]
+license-files = [
+    "LICENSE",
+]
 name = "xproject-python"
 requires-python = ">=3.8"
-[[project.authors]]
-name = "Mingzhe Zou"
-email = "zoumingzhe@outlook.com"
 
 [project.readme]
 content-type = "text/markdown"
 file = "readme.md"
 
 [project.scripts]
-xproject-python-generate = "xproject_python.projector:main"
 xproject-python-config = "xproject_python.configure:main"
+xproject-python-generate = "xproject_python.projector:main"
 
 [project.urls]
 Homepage = "https://github.com/bondbox/xproject/"
@@ -29,18 +42,28 @@ Homepage = "https://github.com/bondbox/xproject/"
 path = "xproject_python/attribute.py"
 
 [tool.hatch.build.targets.sdist]
-exclude = [ "xproject_python/unittest",]
-packages = [ "xproject_python",]
-
-[tool.hatch.build.targets.wheel]
-exclude = [ "xproject_python/unittest",]
-packages = [ "xproject_python",]
-
-[tool.hatch.metadata.hooks.requirements_txt]
-files = [ "requirements.txt",]
+exclude = [
+    "xproject_python/unittest",
+]
+packages = [
+    "xproject_python",
+]
 
 [tool.hatch.build.targets.sdist.force-include]
 templates = "xproject_python/templates"
 
+[tool.hatch.build.targets.wheel]
+exclude = [
+    "xproject_python/unittest",
+]
+packages = [
+    "xproject_python",
+]
+
 [tool.hatch.build.targets.wheel.force-include]
 templates = "xproject_python/templates"
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = [
+    "requirements.txt",
+]

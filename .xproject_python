@@ -27,20 +27,20 @@ max_line_length = 127
 
 [packages.xproject-python.modules.xproject-python]
 base = "xproject_python"
+exclude = [
+    "unittest",
+]
 omitted = [
     "attribute.py",
     "unittest/*",
-]
-exclude = [
-    "unittest",
 ]
 
 [packages.xproject-python.modules.xproject-python.include]
 templates = "templates"
 
 [packages.xproject-python.modules.xproject-python.scripts]
-xproject-python-generate = "projector:main"
 xproject-python-config = "configure:main"
+xproject-python-generate = "projector:main"
 
 [packages.xproject-python.modules.xproject-python.templates]
 "__init__.py" = false

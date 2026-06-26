@@ -34,8 +34,8 @@ class AuthorConfig(Settings):
 class ModuleConfig(Settings):
     base: Optional[str] = None
     package: Optional[List[str]] = None
-    omitted: List[str] = field(default_factory=list)
     exclude: List[str] = field(default_factory=list)
+    omitted: List[str] = field(default_factory=list)
     include: Dict[str, str] = field(default_factory=dict)
     scripts: Dict[str, str] = field(default_factory=dict)
     templates: Dict[str, bool] = field(default_factory=dict)
@@ -163,27 +163,27 @@ if __name__ == "__main__":
                 keywords=[
                 ],
                 requirements=[
-                    "xkits-command",
-                    "xkits-config-toml>=0.5",
-                    "xkits-file>=0.9",
-                    "prompt-toolkit",
+                    "xkits-command>=0.7",
+                    "xkits-config-toml>=0.9",
+                    "xkits-file>=0.10",
                 ],
                 modules={
                     f"{project_name}-python": ModuleConfig(
                         base=f"{project_name}_python",
                         package=None,
+                        exclude=[
+                            "unittest",
+                        ],
                         omitted=[
                             "attribute.py",
                             "unittest/*",
-                        ],
-                        exclude=[
-                            "unittest",
                         ],
                         include={
                             "templates": "templates",
                         },
                         scripts={
-                            f"{project_name}-python": "blueprint:main",
+                            f"{project_name}-python-config": "configure:main",
+                            f"{project_name}-python-generate": "projector:main",  # noqa:E501
                         },
                         templates={
                             "__init__.py": False,
