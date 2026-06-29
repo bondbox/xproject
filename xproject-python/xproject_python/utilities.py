@@ -2,8 +2,6 @@
 
 from configparser import ConfigParser
 from pathlib import Path
-from typing import Any
-from typing import Dict
 from typing import Iterator
 from typing import List
 from typing import Optional
@@ -12,9 +10,6 @@ from typing import TypeVar
 from typing import Union
 
 from packaging.requirements import Requirement
-from tomli_w import dump
-from tomli import load
-
 
 CFGT = TypeVar("CFGT", bound="Configuration")
 
@@ -52,121 +47,6 @@ class Flake8(Configuration):
 
 class PylintRC(Configuration):
     FILENAME: str = ".pylintrc"
-
-
-class Pyproject:  # pylint: disable=too-many-public-methods
-    FILENAME: str = "pyproject.toml"
-
-    def __init__(self, coder: Dict[str, Any]):
-        self.__coder: Dict[str, Any] = coder
-
-    @property
-    def coder(self) -> Dict[str, Any]:
-        return self.__coder
-
-    @property
-    def project(self) -> Dict[str, Any]:
-        return self.coder["project"]
-
-    @property
-    def project_authors(self) -> List[Dict[str, str]]:
-        return self.project["authors"]
-
-    @property
-    def project_keywords(self) -> List[str]:
-        return self.project["keywords"]
-
-    @property
-    def project_scripts(self) -> Dict[str, Any]:
-        return self.project["scripts"]
-
-    @property
-    def project_urls(self) -> Dict[str, str]:
-        return self.project["urls"]
-
-    @property
-    def tool(self) -> Dict[str, Any]:
-        return self.coder["tool"]
-
-    @property
-    def tool_hatch(self) -> Dict[str, Any]:
-        return self.tool["hatch"]
-
-    @property
-    def tool_hatch_build(self) -> Dict[str, Any]:
-        return self.tool_hatch["build"]
-
-    @property
-    def tool_hatch_build_targets(self) -> Dict[str, Any]:
-        return self.tool_hatch_build["targets"]
-
-    @property
-    def tool_hatch_build_targets_sdist(self) -> Dict[str, Any]:
-        return self.tool_hatch_build_targets["sdist"]
-
-    @property
-    def tool_hatch_build_targets_sdist_force_include(self) -> Dict[str, Any]:
-        return self.tool_hatch_build_targets_sdist["force-include"]
-
-    @property
-    def tool_hatch_build_targets_sdist_exclude(self) -> List[str]:
-        return self.tool_hatch_build_targets_sdist["exclude"]
-
-    @property
-    def tool_hatch_build_targets_sdist_packages(self) -> List[str]:
-        return self.tool_hatch_build_targets_sdist["packages"]
-
-    @property
-    def tool_hatch_build_targets_wheel(self) -> Dict[str, Any]:
-        return self.tool_hatch_build_targets["wheel"]
-
-    @property
-    def tool_hatch_build_targets_wheel_force_include(self) -> Dict[str, Any]:
-        return self.tool_hatch_build_targets_wheel["force-include"]
-
-    @property
-    def tool_hatch_build_targets_wheel_exclude(self) -> List[str]:
-        return self.tool_hatch_build_targets_wheel["exclude"]
-
-    @property
-    def tool_hatch_build_targets_wheel_packages(self) -> List[str]:
-        return self.tool_hatch_build_targets_wheel["packages"]
-
-    @property
-    def tool_hatch_metadata(self) -> Dict[str, Any]:
-        return self.tool_hatch["metadata"]
-
-    @property
-    def tool_hatch_metadata_hooks(self) -> Dict[str, Any]:
-        return self.tool_hatch_metadata["hooks"]
-
-    @property
-    def tool_hatch_metadata_hooks_requirements_txt(self) -> Dict[str, Any]:
-        return self.tool_hatch_metadata_hooks["requirements_txt"]
-
-    @property
-    def tool_hatch_metadata_hooks_requirements_txt_files(self) -> List[str]:
-        return self.tool_hatch_metadata_hooks_requirements_txt["files"]
-
-    @property
-    def tool_hatch_version(self) -> List[str]:
-        return self.tool_hatch["version"]
-
-    def dump(self, filepath: Union[str, Path], writable: bool = False):
-        if isinstance(filepath, str):
-            filepath = Path(filepath)  # pragma: no cover
-
-        if not filepath.exists() or writable:
-            with filepath.open("wb") as whdl:
-                dump(self.coder, whdl)
-
-    @classmethod
-    def load(cls, filepath: Union[str, Path]) -> "Pyproject":
-        if isinstance(filepath, str):
-            filepath = Path(filepath)  # pragma: no cover
-
-        with filepath.open("rb") as rhdl:
-            return cls(coder=load(rhdl))
 
 
 class Requirements:
