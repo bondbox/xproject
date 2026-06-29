@@ -28,20 +28,3 @@ file = "readme.md"
 [project.scripts]
 
 [project.urls]
-
-[tool.hatch.version]
-
-[tool.hatch.build.targets.sdist]
-exclude = []
-packages = []
-
-[tool.hatch.build.targets.wheel]
-exclude = []
-packages = []
-
-[tool.hatch.metadata.hooks.requirements_txt]
-files = []
-
-[tool.hatch.build.targets.sdist.force-include]
-
-[tool.hatch.build.targets.wheel.force-include]

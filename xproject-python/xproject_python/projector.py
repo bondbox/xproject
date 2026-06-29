@@ -140,91 +140,98 @@ class Pyproject:  # pylint: disable=too-many-public-methods
 
     @property
     def project(self) -> Dict[str, Any]:
-        return self.coder["project"]
+        return self.coder.setdefault("project", {})
 
     @property
     def project_authors(self) -> List[Dict[str, str]]:
-        return self.project["authors"]
+        return self.project.setdefault("authors", [])
 
     @property
     def project_keywords(self) -> List[str]:
-        return self.project["keywords"]
+        return self.project.setdefault("keywords", [])
 
     @property
     def project_scripts(self) -> Dict[str, Any]:
-        return self.project["scripts"]
+        return self.project.setdefault("scripts", {})
 
     @property
     def project_urls(self) -> Dict[str, str]:
-        return self.project["urls"]
+        return self.project.setdefault("urls", {})
 
     @property
     def tool(self) -> Dict[str, Any]:
-        return self.coder["tool"]
+        return self.coder.setdefault("tool", {})
 
     @property
     def tool_hatch(self) -> Dict[str, Any]:
-        return self.tool["hatch"]
+        return self.tool.setdefault("hatch", {
+            "build": {},
+            "metadata": {},
+            "version": {},
+        })
 
     @property
     def tool_hatch_build(self) -> Dict[str, Any]:
-        return self.tool_hatch["build"]
+        return self.tool_hatch.setdefault("build", {})
 
     @property
     def tool_hatch_build_targets(self) -> Dict[str, Any]:
-        return self.tool_hatch_build["targets"]
+        return self.tool_hatch_build.setdefault("targets", {
+            "sdist": {},
+            "wheel": {},
+        })
 
     @property
     def tool_hatch_build_targets_sdist(self) -> Dict[str, Any]:
-        return self.tool_hatch_build_targets["sdist"]
+        return self.tool_hatch_build_targets.setdefault("sdist", {})
 
     @property
     def tool_hatch_build_targets_sdist_force_include(self) -> Dict[str, Any]:
-        return self.tool_hatch_build_targets_sdist["force-include"]
+        return self.tool_hatch_build_targets_sdist.setdefault("force-include", {})  # noqa:E501
 
     @property
     def tool_hatch_build_targets_sdist_exclude(self) -> List[str]:
-        return self.tool_hatch_build_targets_sdist["exclude"]
+        return self.tool_hatch_build_targets_sdist.setdefault("exclude", [])
 
     @property
     def tool_hatch_build_targets_sdist_packages(self) -> List[str]:
-        return self.tool_hatch_build_targets_sdist["packages"]
+        return self.tool_hatch_build_targets_sdist.setdefault("packages", [])
 
     @property
     def tool_hatch_build_targets_wheel(self) -> Dict[str, Any]:
-        return self.tool_hatch_build_targets["wheel"]
+        return self.tool_hatch_build_targets.setdefault("wheel", {})
 
     @property
     def tool_hatch_build_targets_wheel_force_include(self) -> Dict[str, Any]:
-        return self.tool_hatch_build_targets_wheel["force-include"]
+        return self.tool_hatch_build_targets_wheel.setdefault("force-include", {})  # noqa:E501
 
     @property
     def tool_hatch_build_targets_wheel_exclude(self) -> List[str]:
-        return self.tool_hatch_build_targets_wheel["exclude"]
+        return self.tool_hatch_build_targets_wheel.setdefault("exclude", [])
 
     @property
     def tool_hatch_build_targets_wheel_packages(self) -> List[str]:
-        return self.tool_hatch_build_targets_wheel["packages"]
+        return self.tool_hatch_build_targets_wheel.setdefault("packages", [])
 
     @property
     def tool_hatch_metadata(self) -> Dict[str, Any]:
-        return self.tool_hatch["metadata"]
+        return self.tool_hatch.setdefault("metadata", {})
 
     @property
     def tool_hatch_metadata_hooks(self) -> Dict[str, Any]:
-        return self.tool_hatch_metadata["hooks"]
+        return self.tool_hatch_metadata.setdefault("hooks", {})
 
     @property
     def tool_hatch_metadata_hooks_requirements_txt(self) -> Dict[str, Any]:
-        return self.tool_hatch_metadata_hooks["requirements_txt"]
+        return self.tool_hatch_metadata_hooks.setdefault("requirements_txt", {})  # noqa:E501
 
     @property
     def tool_hatch_metadata_hooks_requirements_txt_files(self) -> List[str]:
-        return self.tool_hatch_metadata_hooks_requirements_txt["files"]
+        return self.tool_hatch_metadata_hooks_requirements_txt.setdefault("files", [])  # noqa:E501
 
     @property
     def tool_hatch_version(self) -> Dict[str, str]:
-        return self.tool_hatch["version"]
+        return self.tool_hatch.setdefault("version", {})
 
     def dump(self, filepath: Union[str, Path], writable: bool = False):
         if isinstance(filepath, str):
