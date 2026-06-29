@@ -223,7 +223,7 @@ class Pyproject:  # pylint: disable=too-many-public-methods
         return self.tool_hatch_metadata_hooks_requirements_txt["files"]
 
     @property
-    def tool_hatch_version(self) -> List[str]:
+    def tool_hatch_version(self) -> Dict[str, str]:
         return self.tool_hatch["version"]
 
     def dump(self, filepath: Union[str, Path], writable: bool = False):
