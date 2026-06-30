@@ -46,7 +46,7 @@ class Module:
     def __init__(self, name: str, config: PackageConfig, variable: Optional[Variable] = None):  # noqa:E501
         option: ModuleConfig = config.modules[name]
 
-        variables: Variable = variable.duplicate()if isinstance(variable, Variable) else Variable()  # noqa:E501
+        variables: Variable = variable.duplicate() if isinstance(variable, Variable) else Variable()  # noqa:E501
         variables.set_default("module_name", module_name := self.normalize(name))  # noqa:E501
 
         module_base: str = option.base or self.DOT
