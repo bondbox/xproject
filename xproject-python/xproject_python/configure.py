@@ -31,12 +31,18 @@ class AuthorConfig(Settings):
 
 
 @dataclass
+class DataConfig(Settings):
+    include: Dict[str, str] = field(default_factory=dict)
+    package: Dict[str, List[str]] = field(default_factory=dict)
+
+
+@dataclass
 class ModuleConfig(Settings):
     base: Optional[str] = None
+    data: Optional[DataConfig] = None
     package: Optional[List[str]] = None
     exclude: List[str] = field(default_factory=list)
     omitted: List[str] = field(default_factory=list)
-    include: Dict[str, str] = field(default_factory=dict)
     scripts: Dict[str, str] = field(default_factory=dict)
     templates: Dict[str, bool] = field(default_factory=dict)
 
@@ -170,6 +176,11 @@ if __name__ == "__main__":
                 modules={
                     f"{project_name}-python": ModuleConfig(
                         base=f"{project_name}_python",
+                        data=DataConfig(
+                            include={
+                                "templates": "templates",
+                            },
+                        ),
                         package=None,
                         exclude=[
                             "unittest",
@@ -178,9 +189,6 @@ if __name__ == "__main__":
                             "attribute.py",
                             "unittest/*",
                         ],
-                        include={
-                            "templates": "templates",
-                        },
                         scripts={
                             f"{project_name}-python-config": "configure:main",
                             f"{project_name}-python-generate": "projector:main",  # noqa:E501

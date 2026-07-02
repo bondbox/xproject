@@ -71,9 +71,10 @@ class Module:
         return self.__variable
 
     @property
-    def include(self) -> Iterator[Tuple[str, str]]:
-        for name, path in self.option.include.items():
-            yield name, self.path_join(path)
+    def include_data(self) -> Iterator[Tuple[str, str]]:
+        if (data := self.option.data) is not None:
+            for src, dst in data.include.items():
+                yield src, self.path_join(dst)
 
     @property
     def exclude(self) -> Iterator[str]:
@@ -227,9 +228,9 @@ class Package:  # pylint: disable=too-many-instance-attributes
         pylint_files: List[str] = []
 
         for module in sorted(modules, key=lambda m: m.base):
-            for include_name, include_path in module.include:
-                self.pyproject.tool_hatch_build_targets_sdist_force_include[include_name] = include_path  # noqa:E501
-                self.pyproject.tool_hatch_build_targets_wheel_force_include[include_name] = include_path  # noqa:E501
+            for src, dst in module.include_data:
+                self.pyproject.tool_hatch_build_targets_sdist_force_include[src] = dst  # noqa:E501
+                self.pyproject.tool_hatch_build_targets_wheel_force_include[src] = dst  # noqa:E501
 
             for exclude in module.exclude:
                 self.pyproject.tool_hatch_build_targets_sdist_exclude.append(exclude)  # noqa:E501

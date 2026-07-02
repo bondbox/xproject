@@ -35,8 +35,10 @@ omitted = [
     "unittest/*",
 ]
 
-[packages.xproject-python.modules.xproject-python.include]
+[packages.xproject-python.modules.xproject-python.data.include]
 templates = "templates"
+
+[packages.xproject-python.modules.xproject-python.data.package]
 
 [packages.xproject-python.modules.xproject-python.scripts]
 xproject-python-config = "configure:main"
