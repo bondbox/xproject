@@ -1,9 +1,6 @@
 [build-system]
-build-backend = "hatchling.build"
-requires = [
-    "hatch-requirements-txt",
-    "hatchling",
-]
+build-backend = ""
+requires = []
 
 [project]
 authors = []
@@ -14,12 +11,12 @@ classifiers = [
 description = ""
 dynamic = [
     "dependencies",
-    "version",
 ]
 keywords = []
 license-files = [ "LICENSE",]
 name = ""
 requires-python = ""
+version = ""
 
 [project.readme]
 content-type = "text/markdown"

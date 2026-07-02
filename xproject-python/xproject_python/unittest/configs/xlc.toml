@@ -1,0 +1,49 @@
+name = "xlc"
+home = "https://github.com/bondbox/xlc/"
+description = "Internationalization(i18n) and Localization(l10n) of Multiple Languages"
+keywords = []
+version = "0.1.alpha.1"
+
+[authors.zoumingzhe]
+name = "Mingzhe Zou"
+email = "zoumingzhe@outlook.com"
+
+[packages.xlc]
+base = "xlc"
+requires_python = ">=3.8"
+authors = [
+    "zoumingzhe",
+]
+keywords = []
+requirements = [
+    "toml",
+]
+build_backend = "setuptools"
+max_complexity = 10
+max_line_length = 127
+
+[packages.xlc.modules.xlc]
+base = "xlc"
+exclude = [
+    "unittest",
+]
+omitted = [
+    "attribute.py",
+    "unittest/*",
+]
+
+[packages.xlc.modules.xlc.data.include]
+
+[packages.xlc.modules.xlc.data.package]
+database = [
+    "langmark.toml",
+    "langtags.toml",
+    "languages.tar.xz",
+    "regions.tar.xz",
+    "scripts.tar.xz",
+]
+
+[packages.xlc.modules.xlc.scripts]
+
+[packages.xlc.modules.xlc.templates]
+"attribute.py" = true

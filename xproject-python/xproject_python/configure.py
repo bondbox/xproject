@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from dataclasses import field
+from enum import Enum
 from errno import ENOENT
 from sys import version_info
 from typing import Dict
@@ -28,6 +29,11 @@ DEFAULT_CONFIG_FILE: str = f".{xproject_name}_python"
 class AuthorConfig(Settings):
     name: str
     email: str
+
+
+class BuildBackend(Enum):
+    hatchling = "HATCH"
+    setuptools = "SETUP"
 
 
 @dataclass
@@ -57,6 +63,7 @@ class PackageConfig(Settings):  # pylint: disable=too-many-instance-attributes
     keywords: List[str] = field(default_factory=list)
     requirements: List[str] = field(default_factory=list)
     modules: Dict[str, ModuleConfig] = field(default_factory=dict)
+    build_backend: BuildBackend = BuildBackend.hatchling
     max_complexity: int = 10
     max_line_length: int = 127
 

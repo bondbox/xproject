@@ -1,5 +1,6 @@
 # coding:utf-8
 
+from enum import Enum
 from errno import ENOENT
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -36,6 +37,19 @@ class TestModule(TestCase):
 
     def test_name(self):
         self.assertEqual(self.module.name, "module")
+
+
+class TestBuildSystem(TestCase):
+
+    def test_choice_raise_ValueError(self):
+        class FakeBuildBackend(Enum):
+            unittest = "UNITTEST"
+
+        self.assertRaises(ValueError, projector.BuildSystem.choice, FakeBuildBackend.unittest)  # noqa:E501
+
+    def test_choice(self):
+        self.assertEqual(projector.BuildSystem.choice(projector.BuildBackend.setuptools), projector.SetupPyproject)  # noqa:E501
+        self.assertEqual(projector.BuildSystem.choice(projector.BuildBackend.hatchling), projector.HatchPyproject)  # noqa:E501
 
 
 class TestPackage(TestCase):

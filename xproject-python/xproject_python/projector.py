@@ -1,5 +1,6 @@
 # coding:utf-8
 
+from enum import Enum
 from errno import ENOENT
 from json import dumps
 from pathlib import Path
@@ -11,6 +12,8 @@ from typing import List
 from typing import Optional
 from typing import Sequence
 from typing import Tuple
+from typing import Type
+from typing import TypeVar
 from typing import Union
 
 from packaging.specifiers import SpecifierSet
@@ -20,12 +23,14 @@ from xkits_command.actuator import Command
 from xkits_command.actuator import CommandArgument
 from xkits_command.actuator import CommandExecutor
 from xkits_command.parser import ArgParser
+from xkits_file.template import Template
 from xkits_file.template import TemplateManagerPath
 from xkits_file.template import Variable
 
 from xproject_python.attribute import __project_home__ as project_home
 from xproject_python.attribute import __version__ as version
 from xproject_python.configure import AuthorConfig
+from xproject_python.configure import BuildBackend
 from xproject_python.configure import DEFAULT_CONFIG_FILE
 from xproject_python.configure import ModuleConfig
 from xproject_python.configure import PackageConfig
@@ -79,6 +84,12 @@ class Module:
                 yield src, self.path_join(dst)
 
     @property
+    def package_data(self) -> Iterator[Tuple[str, List[str]]]:
+        if (data := self.option.data) is not None:
+            for route, match in data.package.items():
+                yield self.dot_join(route), match
+
+    @property
     def exclude(self) -> Iterator[str]:
         for path in self.option.exclude:
             yield self.path_join(path)
@@ -90,6 +101,19 @@ class Module:
                 yield self.path_join(path)
         else:
             yield self.base
+
+    @property
+    def setuptools_exclude(self) -> Iterator[str]:
+        for path in self.option.exclude:
+            yield self.dot_join(path)
+
+    @property
+    def setuptools_package(self) -> Iterator[str]:
+        if self.option.package is not None:
+            for path in self.option.package:
+                yield self.dot_join(path)
+        else:
+            yield f"{self.base}*"
 
     @property
     def omitted(self) -> Iterator[str]:
@@ -128,10 +152,18 @@ class Module:
         templates.dump(base=root, writable=writable)
 
 
-class Pyproject:  # pylint: disable=too-many-public-methods
+PYPT = TypeVar("PYPT", bound="Pyproject")
+
+
+class Pyproject:
+    BACKEND: str
+    REQUIRES: List[str]
     FILENAME: str = "pyproject.toml"
 
-    def __init__(self, coder: Dict[str, Any]):
+    def __init__(self, coder: Dict[str, Any]) -> None:
+        build_system: Dict[str, Any] = coder.setdefault("build-system", {})
+        build_system["build-backend"] = self.BACKEND
+        build_system["requires"] = self.REQUIRES
         self.__coder: Dict[str, Any] = coder
 
     @property
@@ -145,6 +177,10 @@ class Pyproject:  # pylint: disable=too-many-public-methods
     @property
     def project_authors(self) -> List[Dict[str, str]]:
         return self.project.setdefault("authors", [])
+
+    @property
+    def project_dynamic(self) -> List[str]:
+        return self.project.setdefault("dynamic", [])
 
     @property
     def project_keywords(self) -> List[str]:
@@ -161,6 +197,34 @@ class Pyproject:  # pylint: disable=too-many-public-methods
     @property
     def tool(self) -> Dict[str, Any]:
         return self.coder.setdefault("tool", {})
+
+    def attach(self, module: Module) -> None:
+        raise NotImplementedError
+
+    def dump(self, filepath: Union[str, Path], writable: bool = False) -> None:
+        if isinstance(filepath, str):
+            filepath = Path(filepath)  # pragma: no cover
+
+        if not filepath.exists() or writable:
+            with filepath.open("wb") as whdl:
+                dump(self.coder, whdl)
+
+    @classmethod
+    def load(cls: Type[PYPT], filepath: Union[str, Path]) -> PYPT:
+        if isinstance(filepath, str):
+            filepath = Path(filepath)  # pragma: no cover
+
+        with filepath.open("rb") as rhdl:
+            return cls(coder=load(rhdl))
+
+
+class HatchPyproject(Pyproject):
+    BACKEND: str = "hatchling.build"
+    REQUIRES: List[str] = ["hatch-requirements-txt", "hatchling",]
+
+    def __init__(self, coder: Dict[str, Any]) -> None:
+        super().__init__(coder=coder)
+        self.project_dynamic.append("version")
 
     @property
     def tool_hatch(self) -> Dict[str, Any]:
@@ -233,26 +297,102 @@ class Pyproject:  # pylint: disable=too-many-public-methods
     def tool_hatch_version(self) -> Dict[str, str]:
         return self.tool_hatch.setdefault("version", {})
 
-    def dump(self, filepath: Union[str, Path], writable: bool = False):
-        if isinstance(filepath, str):
-            filepath = Path(filepath)  # pragma: no cover
+    def attach(self, module: Module) -> None:
+        for exclude in module.exclude:
+            self.tool_hatch_build_targets_sdist_exclude.append(exclude)
+            self.tool_hatch_build_targets_wheel_exclude.append(exclude)
 
-        if not filepath.exists() or writable:
-            with filepath.open("wb") as whdl:
-                dump(self.coder, whdl)
+        for package in module.package:
+            self.tool_hatch_build_targets_sdist_packages.append(package)
+            self.tool_hatch_build_targets_wheel_packages.append(package)
+
+        for src, dst in module.include_data:
+            self.tool_hatch_build_targets_sdist_force_include[src] = dst
+            self.tool_hatch_build_targets_wheel_force_include[src] = dst
+
+        if Module.ATTRIBUTE in module.option.templates:
+            self.tool_hatch_version["path"] = module.path_join(Module.ATTRIBUTE)  # noqa:E501
+
+    def dump(self, filepath: Union[str, Path], writable: bool = False) -> None:
+        self.project.pop("version")
+        self.tool_hatch_metadata_hooks_requirements_txt_files.append(Requirements.FILENAME)  # noqa:E501
+        super().dump(filepath=filepath, writable=writable)
+
+
+class SetupPyproject(Pyproject):
+    BACKEND: str = "setuptools.build_meta"
+    REQUIRES: List[str] = ["setuptools", "toml",]
+
+    def __init__(self, coder: Dict[str, Any]) -> None:
+        super().__init__(coder=coder)
+        self.tool_setuptools_dynamic_dependencies_file.append(Requirements.FILENAME)  # noqa:E501
+
+    @property
+    def tool_setuptools(self) -> Dict[str, Any]:
+        return self.tool.setdefault("setuptools", {})
+
+    @property
+    def tool_setuptools_dynamic(self) -> Dict[str, Any]:
+        return self.tool_setuptools.setdefault("dynamic", {})
+
+    @property
+    def tool_setuptools_dynamic_dependencies(self) -> Dict[str, Any]:
+        return self.tool_setuptools_dynamic.setdefault("dependencies", {})
+
+    @property
+    def tool_setuptools_dynamic_dependencies_file(self) -> List[str]:
+        return self.tool_setuptools_dynamic_dependencies.setdefault("file", [])
+
+    @property
+    def tool_setuptools_packages(self) -> Dict[str, Any]:
+        return self.tool_setuptools.setdefault("packages", {})
+
+    @property
+    def tool_setuptools_packages_find(self) -> Dict[str, Any]:
+        return self.tool_setuptools_packages.setdefault("find", {})
+
+    @property
+    def tool_setuptools_packages_find_exclude(self) -> List[str]:
+        return self.tool_setuptools_packages_find.setdefault("exclude", [])
+
+    @property
+    def tool_setuptools_packages_find_include(self) -> List[str]:
+        return self.tool_setuptools_packages_find.setdefault("include", [])
+
+    @property
+    def tool_setuptools_package_data(self) -> Dict[str, List[str]]:
+        return self.tool_setuptools.setdefault("package-data", {})
+
+    def attach(self, module: Module) -> None:
+        for exclude in module.setuptools_exclude:
+            self.tool_setuptools_packages_find_exclude.append(exclude)
+
+        for package in module.setuptools_package:
+            self.tool_setuptools_packages_find_include.append(package)
+
+        for route, match in module.package_data:
+            self.tool_setuptools_package_data[route] = match
+
+    def dump(self, filepath: Union[str, Path], writable: bool = False) -> None:
+        super().dump(filepath=filepath, writable=writable)
+
+
+class BuildSystem(Enum):
+    HATCH = HatchPyproject
+    SETUP = SetupPyproject
 
     @classmethod
-    def load(cls, filepath: Union[str, Path]) -> "Pyproject":
-        if isinstance(filepath, str):
-            filepath = Path(filepath)  # pragma: no cover
-
-        with filepath.open("rb") as rhdl:
-            return cls(coder=load(rhdl))
+    def choice(cls, build_backend: BuildBackend) -> Type[Pyproject]:
+        try:
+            return cls[build_backend.value].value
+        except KeyError as exc:
+            raise ValueError(f"Invalid build_backend: {build_backend}") from exc  # noqa:E501
 
 
 class Package:  # pylint: disable=too-many-instance-attributes
     TEMPLATES_PACKAGE: Path = TEMPLATES / "package"
-    FILES: List[str] = ["Makefile"]
+    FILES: Tuple[str, ...] = ("Makefile",)
+    SETUP: str = "setup.py"
 
     def __init__(self, name: str, config: ProjectConfig, variable: Optional[Variable] = None):  # pylint: disable=too-many-locals # noqa:E501
         option: PackageConfig = config.packages[name]
@@ -261,6 +401,7 @@ class Package:  # pylint: disable=too-many-instance-attributes
         variables.set_default("package_name", package_name := Requirements.normalize(requirement=name).name)  # noqa:E501
         variables.set_default("package_description", package_description := option.description or config.description)  # noqa:E501
         variables.set_default("package_version", package_version := option.version or config.version)  # noqa:E501
+        python_version: str = option.requires_python or f">={version_info.major}.{version_info.minor}"  # noqa:E501
 
         authors: List[AuthorConfig] = [config.authors[index] for index in option.authors]  # noqa:E501
         variables.set_default("authors", dumps(authors, indent=4, default=lambda i: i.__dict__))  # noqa:E501
@@ -269,11 +410,12 @@ class Package:  # pylint: disable=too-many-instance-attributes
         flake8: Flake8 = Flake8.load(self.TEMPLATES_PACKAGE / Flake8.FILENAME)
         pylint: PylintRC = PylintRC.load(self.TEMPLATES_PACKAGE / PylintRC.FILENAME)  # noqa:E501
 
-        python_version: str = option.requires_python or f">={version_info.major}.{version_info.minor}"  # noqa:E501
-        pyproject: Pyproject = Pyproject.load(self.TEMPLATES_PACKAGE / Pyproject.FILENAME)  # noqa:E501
+        build_backend: Type[Pyproject] = BuildSystem.choice(option.build_backend)  # noqa:E501
+        pyproject: Pyproject = build_backend.load(self.TEMPLATES_PACKAGE / Pyproject.FILENAME)  # noqa:E501
         pyproject.project["name"] = package_name
         pyproject.project["description"] = package_description
         pyproject.project["requires-python"] = python_version
+        pyproject.project["version"] = package_version
         pyproject.project_authors.extend(author.__dict__ for author in authors)
         pyproject.project_keywords.extend(config.keywords)
         pyproject.project_keywords.extend(option.keywords)
@@ -352,18 +494,12 @@ class Package:  # pylint: disable=too-many-instance-attributes
         pylint_files: List[str] = []
 
         for module in sorted(modules, key=lambda m: m.base):
-            for src, dst in module.include_data:
-                self.pyproject.tool_hatch_build_targets_sdist_force_include[src] = dst  # noqa:E501
-                self.pyproject.tool_hatch_build_targets_wheel_force_include[src] = dst  # noqa:E501
+            self.pyproject.attach(module)
 
             for exclude in module.exclude:
-                self.pyproject.tool_hatch_build_targets_sdist_exclude.append(exclude)  # noqa:E501
-                self.pyproject.tool_hatch_build_targets_wheel_exclude.append(exclude)  # noqa:E501
                 flake8_exclude += f"\n{exclude}"
 
             for package in module.package:
-                self.pyproject.tool_hatch_build_targets_sdist_packages.append(package)  # noqa:E501
-                self.pyproject.tool_hatch_build_targets_wheel_packages.append(package)  # noqa:E501
                 coverage_source += f"\n{package.removesuffix('.py')}"
                 flake8_modules.append(package)
 
@@ -398,14 +534,14 @@ class Package:  # pylint: disable=too-many-instance-attributes
         templates.load(base=self.TEMPLATES_PACKAGE, include=self.FILES)
         templates.dump(base=root, writable=writable)
 
-        self.requirements.dumpf(filepath=root / Requirements.FILENAME, writable=writable)  # noqa:E501
-        self.pyproject.tool_hatch_metadata_hooks_requirements_txt_files.append(Requirements.FILENAME)  # noqa:E501
-        self.pyproject.tool_hatch_version["path"] = attribute_modules[0].path_join(Module.ATTRIBUTE)  # noqa:E501
-        self.pyproject.dump(filepath=root / Pyproject.FILENAME, writable=writable)  # noqa:E501
+        if self.option.build_backend is BuildBackend.setuptools:
+            Template.load(self.TEMPLATES_PACKAGE / self.SETUP).save(root / self.SETUP)  # noqa:E501
 
         self.coverage.dump(filepath=root / CoverageRC.FILENAME, writable=writable)  # noqa:E501
         self.flake8.dump(filepath=root / Flake8.FILENAME, writable=writable)  # noqa:E501
         self.pylint.dump(filepath=root / PylintRC.FILENAME, writable=writable)  # noqa:E501
+        self.pyproject.dump(filepath=root / Pyproject.FILENAME, writable=writable)  # noqa:E501
+        self.requirements.dumpf(filepath=root / Requirements.FILENAME, writable=writable)  # noqa:E501
 
         for module in modules:
             module.dump(base=root / module.base, writable=writable)
